@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Klubeko Kuoten Kalkulagailua</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  background: #ffffff;
+  color: #111;
+  padding: 20px;
+}
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  width: 95%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+h1 {
+  margin: 0 0 12px;
+  color: #387b5b;
+}
+.row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+  display: block;
+}
+select, .output {
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #d0d7e0;
+  font-size: 0.95rem;
+}
+.member {
+  border: 1px dashed #c0e3c3;
+  padding: 8px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  background: #e6f3ec;
+  transition: background 0.3s;
+}
+.member h3 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+}
+.member.free { background: #fff3e0; }
+.results {
+  margin-top: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  background: #e6f3ec;
+  font-weight: 700;
+  width: 100%;
+  box-sizing: border-box;
+}
+.small {
+  font-size: 0.9rem;
+  color: #555;
+}
+.inline {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.total {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #e6f3ec;
+  font-weight: 800;
+  font-size: 1.05rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 0;
+  background: #387b5b;
+  color: #fff;
+  cursor: pointer;
+}
+button:disabled {
+  background: #c0dfc8;
+  cursor: not-allowed;
+}
+.member .altaCuota {
+  margin-top: 4px;
+  font-weight: 600;
+  color: #387b5b;
+  font-size: 0.85rem;
+}
+.member .plazosCuota {
+  margin-top: 2px;
+  color: #555;
+  font-size: 0.85rem;
+}
+.total-claro {
+  display: block;
+  font-size: 0.9em;
+  color: #333;
+  background-color: #f0f7f0;
+  border: 1px solid #c0e3c3;
+  padding: 6px 10px;
+  margin-top: 8px;
+  border-radius: 6px;
+  line-height: 1.4em;
+  text-align: right;
+  width: fit-content;
+  margin-left: auto;
+}
+.total-claro span.small {
+  font-size: 0.8em;
+  color: #387b5b;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.popupLink {
+  color: #387b5b;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.resumenLine {
+  font-size: 0.85em;
+  margin-bottom: 2px;
+}
+.popupOverlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.popupBox {
+  background: #ffffff;
+  border-radius: 12px;
+  max-width: 420px;
+  padding: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  text-align: left;
+  font-size: 0.95rem;
+}
+.popupBox h3 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  color: #387b5b;
+}
+.popupClose {
+  float: right;
+  font-weight: bold;
+  cursor: pointer;
+  color: #387b5b;
+}
+.popupClose:hover {
+  color: #333;
+}
+#infoContext {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #e6f3ec;
+  border: 1px solid #c0e3c3;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+#infoContext p { margin: 4px 0; }
+#infoContext p strong { color: #387b5b; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Klubeko kuoten kalkulagailua</h1>
+  <div id="infoContext">
+    <p><strong>2025eko otsailaren 22ko Batzar Orokorrean onartutako urteroko kuota</strong></p>
+    <p>ℹ️ URTEROKO KUOTA 6 zatitan kobratzen da, ordainketa errazagoa egiteko.</p>
+    <p><strong>⚠️ EZ DIRA HILABETE, EGUN edo ORDUEI DAGOZKIEN ORDAINKETAK; </strong> URTE OSOKO KLUBAREN SOSTENGURAKO EGINDAKO BAZKIDE EKARPENAK BAIZIK.</p>
+    <p>⚠️ Entrenamendu epea eta iraupena desberdina da kategoria edo atal bakoitzaren arabera.</p>
+    <p>ℹ️ 2025eko urriaren 1etik aurrera (Master taldearentzat azaroaren 1etik aurrera), izena ematen dutenek 28€ko alta-kuota ordaindu beharko dute.</p>
+    <p>ℹ️ Kuotaren ordainketarekin batera, izena emandako pertsona edo bere legezko tutoreetako bat klubeko bazkide egiten da, Batzar Nagusian parte hartu eta bozkatzeko eskubidearekin. <a href="https://www.buruntzaldeaikt.eus/kluba/estatutuak" target="_blank">Ikusi Estatutuak</a></p>
+  </div>
+
+  <div class="row">
+    <div style="width:250px">
+      <label>
+        <input type="checkbox" id="useRGI" name="rgiCheck" class="rgiCheck">
+        DSBE / BGDS hobaria aplikatu 
+        <span class="small" title="RGI / IMV laguntza, %75eko deskontua. Deskontu hau aukeratuz gero, hilean 25a baino lehen laguntza jasotzeko ziurtagiria aurkeztu beharko duzu.">(?)</span>
+      </label>
+    </div>
+    <div style="width:200px">
+      <label for="totalFam">Familiakide kopurua</label>
+      <select id="totalFam">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4 edo gehiago</option>
+      </select>
+    </div>
+    <div style="width:160px; align-self:flex-end">
+      <button id="loadBtn">SAKATU datuak kargatzeko eta HASTEKO</button>
+    </div>
+  </div>
+
+  <div id="membersContainer"></div>
+
+  <div id="summaryArea" style="display:none; width: 100%;">
+    <div class="results"><strong>Laburpena</strong><br></div>
+    <div class="results" id="resultsBox"></div>
+    <div class="total" id="totalBox">Guztira: —</div>
+  </div>
+</div>
+
+<script>
+
+// --------------------- CONFIGURACIÓN DE CSV ---------------------
+const csvSheets = {
+"2019 Egun 1 Lasarte-Oria":"https://docs.google.com/spreadsheets/d/e/2PACX-1vRk3A_LNtXB7oYO6aB-uPr8546sqdrxIGEvNkDxL2azMjwgxPNovIBfwO9U87vVo7KAk6zF6tJGfWVa/pub?gid=1104631462&single=true&output=csv",
+"2019 2 Egun Lasarte-Oria":"https://docs.google.com/spreadsheets/d/e/2PACX-1vRk3A_LNtXB7oYO6aB-uPr8546sqdrxIGEvNkDxL2azMjwgxPNovIBfwO9U87vVo7KAk6zF6tJGfWVa/pub?gid=594372538&single=true&output=csv",
+"2018-2014 Lasarte-Oria":"https://docs.google.com/spreadsheets/d/e/2PACX-1vRk3A_LNtXB7oYO6aB-uPr8546sqdrxIGEvNkDxL2azMjwgxPNovIBfwO9U87vVo7KAk6zF6tJGfWVa/pub?gid=854262720&single=true&output=csv",
+"2013-2012 Lasarte-Oria":"https://docs.google.com/spreadsheets/d/e/2PACX-1vRk3A_LNtXB7oYO6aB-uPr8546sqdrxIGEvNkDxL2azMjwgxPNovIBfwO9U87vVo7KAk6zF6tJGfWVa/pub?gid=174360607&single=true&output=csv",
+"2011--> 18+ Lasarte-Oria":"https://docs.google.com/spreadsheets/d/e/2PACX-1vRk3A_LNtXB7oYO6aB-uPr8546sqdrxIGEvNkDxL2azMjwgxPNovIBfwO9U87vVo7KAk6zF6tJGfWVa/pub?gid=786890196&single=true&output=csv",
+"2017--> 18+ Andoain":"https://docs.google.com/spreadsheets/d/e/2PACX-1vRk3A_LNtXB7oYO6aB-uPr8546sqdrxIGEvNkDxL2azMjwgxPNovIBfwO9U87vVo7KAk6zF6tJGfWVa/pub?gid=641105268&single=true&output=csv",
+"Parte-hartze Igeriketa Egun 1":"https://docs.google.com/spreadsheets/d/e/2PACX-1vRk3A_LNtXB7oYO6aB-uPr8546sqdrxIGEvNkDxL2azMjwgxPNovIBfwO9U87vVo7KAk6zF6tJGfWVa/pub?gid=541455715&single=true&output=csv",
+"Parte-hartze Igeriketa 2 Egun":"https://docs.google.com/spreadsheets/d/e/2PACX-1vRk3A_LNtXB7oYO6aB-uPr8546sqdrxIGEvNkDxL2azMjwgxPNovIBfwO9U87vVo7KAk6zF6tJGfWVa/pub?gid=2101736621&single=true&output=csv",
+"Master Taldea":"https://docs.google.com/spreadsheets/d/e/2PACX-1vRk3A_LNtXB7oYO6aB-uPr8546sqdrxIGEvNkDxL2azMjwgxPNovIBfwO9U87vVo7KAk6zF6tJGfWVa/pub?gid=2128438898&single=true&output=csv"
+};
+
+let sheets = {};
+const loadBtn = document.getElementById('loadBtn');
+const membersContainer = document.getElementById('membersContainer');
+const totalFamSelect = document.getElementById('totalFam');
+const summaryArea = document.getElementById('summaryArea');
+const resultsBox = document.getElementById('resultsBox');
+const totalBox = document.getElementById('totalBox');
+const useRGIcheckbox = document.getElementById('useRGI');
+
+// --------------------- CARGA DE CSV ---------------------
+loadBtn.addEventListener('click', async()=>{
+  loadBtn.disabled=true; loadBtn.textContent='Kargatzen...';
+  membersContainer.innerHTML=''; summaryArea.style.display='none'; sheets={};
+  try{
+    await Promise.all(Object.entries(csvSheets).map(async([name,url])=>{
+      const r = await fetch(url); if(!r.ok) throw new Error('Error al cargar '+name);
+      const text = await r.text();
+      sheets[name] = csvToObjects(text);
+    }));
+    createMemberBlocks();
+    summaryArea.style.display='block';
+    recalcAll();
+  }catch(e){ alert('Error cargando CSV: '+e.message);}
+  finally{loadBtn.disabled=false; loadBtn.textContent='Datuak kargatuta';}
+});
+
+totalFamSelect.addEventListener('change',()=>{
+  createMemberBlocks();
+  recalcAll();
+});
+useRGIcheckbox.addEventListener('change', recalcAll);
+
+// --------------------- CREACIÓN DE BLOQUES ---------------------
+function createMemberBlocks(){
+  membersContainer.innerHTML=''; 
+  const count=Number(totalFamSelect.value);
+  for(let i=0;i<count;i++){
+    const div=document.createElement('div'); div.className='member';
+    div.innerHTML=`<h3>${i+1} Familiakidea</h3>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;"> 
+      <div style="flex: 1; min-width: 280px; align-self: flex-start;"> 
+        <label>Hautatu multzoa</label>
+        <select class="sheetSelect"></select>
+      </div>
+      <div style="flex: 1; min-width: 200px; align-self: flex-start;"> 
+        <label>Hasiera hilabetea</label>
+        <select class="monthSelect"><option>—</option></select>
+      </div>
+     <div style="flex: 1; min-width: 250px; align-self: flex-start;"> 
+<label>Dagokion kuota</label>
+        <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap;"> 
+          <div class="output feeDisplay" style="flex: 1;">—</div> 
+          <div class="altaCuota" style="white-space: nowrap;"></div> 
+          <div class="plazosCuota small" style="white-space: nowrap;"></div> 
+        </div>
+      </div>
+    </div>
+    <div class="explicacionCuota"></div>
+  </div>`;
+    membersContainer.appendChild(div);
+    const sheetSel = div.querySelector('.sheetSelect');
+    Object.keys(csvSheets).forEach(name=>{
+      const opt=document.createElement('option'); opt.value=name; opt.textContent=name; sheetSel.appendChild(opt);
+    });
+    sheetSel.addEventListener('change', ()=>{
+      populateMonthsForMember(div);
+      recalcAll();
+    });
+    div.querySelector('.monthSelect').addEventListener('change', recalcAll);
+  }
+  document.querySelectorAll('.member').forEach(m=>{
+    const s=m.querySelector('.sheetSelect');
+    if(s.options.length)s.selectedIndex=0;
+    populateMonthsForMember(m);
+  });
+}
+
+// --------------------- POBLAR MESES ---------------------
+function populateMonthsForMember(memberDiv){
+  const sheetSel = memberDiv.querySelector('.sheetSelect');
+  const monthSel = memberDiv.querySelector('.monthSelect');
+  monthSel.innerHTML = '';
+  const sheet = sheets[sheetSel.value];
+  if(!sheet){ 
+    monthSel.innerHTML='<option>—</option>'; 
+    return;
+  }
+  const months = sheet.map(r => r['Mes inicio']).filter(Boolean);
+  const seen = new Set();
+  const uniq = months.filter(m => (seen.has(m)?false:seen.add(m)));
+  if(uniq.length === 0){
+      monthSel.innerHTML='<option>—</option>';
+  } else {
+      uniq.forEach(m=>{
+          const o = document.createElement('option');
+          o.value = m;
+          o.textContent = m;
+          monthSel.appendChild(o);
+      });
+      monthSel.selectedIndex = 0;
+  }
+}
+
+// --------------------- PARSE CSV ---------------------
+function csvToObjects(csv){
+  const rows=[]; const lines=csv.split(/\r\n|\n/); 
+  if(lines.length<9) return rows;
+  const headers=parseCsvLine(lines[7]);
+  for(let i=8;i<lines.length;i++){
+    if(!lines[i].trim()) continue;
+    const vals=parseCsvLine(lines[i]); 
+    const obj={};
+    for(let j=0;j<headers.length;j++) obj[headers[j].trim()]=vals[j]?vals[j].trim():''; 
+    rows.push(obj);
+  } 
+  return rows;
+}
+function parseCsvLine(line){
+  const result=[]; let inQuotes=false, val=''; 
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(ch==='\"') inQuotes=!inQuotes;
+    else if(ch===',' && !inQuotes){ result.push(val); val=''; }
+    else val+=ch;
+  }
+  result.push(val); return result;
+}
+
+// --------------------- CÁLCULO DE CUOTAS ---------------------
+function recalcAll(){
+  const members = document.querySelectorAll('.member');
+  const countFam = Number(totalFamSelect.value);
+  const useRGI = useRGIcheckbox.checked;
+  const fees = [];
+
+  members.forEach((m)=>{
+    const sheetName = m.querySelector('.sheetSelect').value;
+    const month = m.querySelector('.monthSelect').value;
+    const sheet = sheets[sheetName];
+    let fee = 0;
+    let row = null;
+    const monthSel = m.querySelector('.monthSelect');
+    const monthIndex = monthSel.selectedIndex;
+    const isMaster = sheetName.includes('Master');
+
+    if(sheet && month && month !== '—'){
+      row = sheet.find(r => r['Mes inicio']?.trim() === month.trim());
+     if(row){
+        fee = parseFloat((row['1 familiar']||'0').replace(',','.').replace('€','')) || 0;
+        
+        if (useRGI && fee > 0) {
+          fee = fee * 0.25; 
+        }
+      }
+    }
+
+    fees.push({div:m, fee, row, sheetName, month, monthIndex, isMaster});
+    m.classList.remove('free');
+  });
+
+  // Ajuste por número de familiares si NO RGI
+  if(!useRGI){
+    if(countFam === 2){
+      fees.forEach(f => {
+        if(f.row) f.fee = parseFloat((f.row['2 familiares']||f.fee).replace(',','.').replace('€','')) || f.fee;
+      });
+    } else if(countFam === 3){
+      const sorted = [...fees].sort((a,b)=>b.fee - a.fee);
+      if(sorted[0] && sorted[0].row) sorted[0].fee = parseFloat((sorted[0].row['2 familiares']||sorted[0].fee).replace(',','.').replace('€','')) || sorted[0].fee;
+      if(sorted[1] && sorted[1].row) sorted[1].fee = parseFloat((sorted[1].row['2 familiares']||sorted[1].fee).replace(',','.').replace('€','')) || sorted[1].fee;
+      if(sorted[2] && sorted[2].row) sorted[2].fee = parseFloat((sorted[2].row['Tercer familiar']||sorted[2].fee).replace(',','.').replace('€','')) || sorted[2].fee;
+    } else if(countFam >= 4){
+      const sorted = [...fees].sort((a,b)=>b.fee - a.fee);
+      if(sorted[0] && sorted[0].row) sorted[0].fee = parseFloat((sorted[0].row['2 familiares']||sorted[0].fee).replace(',','.').replace('€','')) || sorted[0].fee;
+      if(sorted[1] && sorted[1].row) sorted[1].fee = parseFloat((sorted[1].row['2 familiares']||sorted[1].fee).replace(',','.').replace('€','')) || sorted[1].fee;
+      if(sorted[2] && sorted[2].row) sorted[2].fee = parseFloat((sorted[2].row['Tercer familiar']||sorted[2].fee).replace(',','.').replace('€','')) || sorted[2].fee;
+      for(let i=3;i<sorted.length;i++) sorted[i].fee = 0;
+    }
+  }
+
+  // Cuota de alta y Plazos
+  fees.forEach(f=>{
+    const altaDiv = f.div.querySelector('.altaCuota');
+    const monthIndex = f.monthIndex;
+    const isMaster = f.isMaster;
+
+    // Lógica de Alta: Index 0 (Octubre o Noviembre para Master) NO paga. Index 1 o más SÍ paga 28€.
+    let alta = 0;
+    if (isMaster) {
+        alta = (monthIndex >= 1) ? 28 : 0;
+    } else {
+        alta = (monthIndex >= 1) ? 28 : 0;
+    }
+    f.alta = alta;
+    altaDiv.innerHTML = alta ? `<span style="color:#a0522d;">Alta kuota: ${alta.toFixed(2)} €</span>` : '';
+
+    // Lógica de Plazos Restantes
+    let plazos = 6 - monthIndex;
+    if(plazos < 1) plazos = 1;
+
+    f.plazosRestantes = plazos;
+    f.plazosPosteriores = plazos > 1 ? plazos - 1 : 0;
+  });
+
+  // Mostrar cuota y Plazos en los bloques de familiar
+  fees.forEach(f=>{
+    const display = f.div.querySelector('.feeDisplay');
+    display.textContent = f.fee > 0 ? f.fee.toFixed(2)+' €' : '0.00 € (ez du ordaintzen)';
+
+    // Explicación de Cuota y Plazos
+    const explainerDiv = f.div.querySelector('.explicacionCuota'); 
+    let explainerText = '';
+    
+    if (f.monthIndex > 0) {
+      explainerText = `
+        <p style="font-size: 0.85rem; color: #1e8449; margin-top: 5px; padding: 5px; border-left: 3px solid #1e8449; background-color: #f0fff0;">
+          *Kuota eta epeen egokitzapena:* Bazkide egiteko momentua urriaren 1etik aurrera bada (azaroaren 1etik aurrera Master taldean), urteko kuota egokitu egiten da gainontzeko guztiekin batera martxoan amaitzeko (apirilean Master taldearen kasuan). Burutu ez diren hilabeteak kontutan hartzen dira.<br><br>**Alta-kuota:** Urriaren 1etik aurrera (azaroren 1etik aurrera Master taldean) hasten direnek 28 €-ko alta-kuota dute. Data hori baino lehen izena ematen dutenek EZ dute alta-kuotarik ordaintzen.
+        </p>
+      `;
+    }
+    explainerDiv.innerHTML = explainerText;
+
+    // Plazo y Info Popup
+    let plazoText = '';
+    let infoPopupText = ''; 
+    
+    if(f.plazosRestantes > 0) {
+        if (f.plazosRestantes > 1) {
+            plazoText = `${f.plazosRestantes} helbideratutako epe`;
+            const mesesBase = ['Urria', 'Azaroa', 'Abendua', 'Urtarrila', 'Otsaila', 'Martxoa'];
+            const mesesMaster = ['Azaroa', 'Abendua', 'Urtarrila', 'Otsaila', 'Martxoa', 'Apirila'];
+            const meses = f.isMaster ? mesesMaster : mesesBase;
+            const mesesCobro = meses.slice(f.monthIndex, f.monthIndex + f.plazosRestantes).join(', ');
+            infoPopupText = `<b>{${mesesCobro}}</b> hilabeteen <b>1etik 5era bitartean</b>`;
+        } else {
+            plazoText = 'Transferentzia bidezko ordainketa 1';
+            infoPopupText = 'Izen-ematea egiteko momentuan. <br>Klubak ABANCAn duen kontura transferentzia<br><b>ABANCA ES75 2080 3637 8130 4003 7051</b>';
+        }
+    } else {
+        plazoText = '—';
+    }
+    
+    // **NOTA:** El problema está en cómo se inyecta el HTML que contiene `popupLink`.
+    // La solución es tener un listener que detecte todos los clics en la clase.
+    const infoLink = `<span class="popupLink" data-info="📅 <b>Ordainketa data:</b><br>${infoPopupText}"><small>[info]</small></span>`;
+    f.div.querySelector('.plazosCuota').innerHTML = `${plazoText} ${infoLink}`;
+  });
+
+// Total Anual
+    const totalCuotasAnuales = fees.reduce((acc,f)=>acc + f.fee * f.plazosRestantes, 0);
+    const totalAltas = fees.reduce((acc,f)=>acc + f.alta, 0);
+    const totalAnual = totalCuotasAnuales + totalAltas;
+
+    // Primer pago: (1 cuota + alta)
+    const totalPrimerPago = fees.reduce((acc,f)=>acc + f.fee + f.alta, 0); 
+
+    // Calcular la suma total de dinero a pagar en los plazos posteriores (sin alta).
+    const montoTotalPagosPosteriores = fees.reduce((acc, f) => acc + f.fee * f.plazosPosteriores, 0); 
+    
+    // ----------------------------------------------------
+    // INYECCIÓN DEL HTML EN totalBox
+    // ----------------------------------------------------
+
+    let primerPagoPorFamiliar = '';
+    let pagosPosterioresPorFamiliar = '';
+    
+    fees.forEach((f, idx) => {
+        const montoPrimerPago = f.fee + f.alta;
+        const altaTexto = f.alta > 0 ? ` + ${f.alta.toFixed(2)} € Alta` : '';
+        const nombreGrupo = f.div.querySelector('.sheetSelect').value;
+        
+        // 1. DESGLOSE PRIMER PAGO (Cuota + Alta)
+        primerPagoPorFamiliar += `
+            <div class="small" style="margin-left:10px; font-weight: normal; margin-top: 2px;">
+                ${idx + 1} Familikidea: <b>${montoPrimerPago.toFixed(2)} €</b> 
+                (<span title="${nombreGrupo} | Mes de inicio: ${f.month}">${f.fee.toFixed(2)} € Cuota</span>${altaTexto})
+            </div>
+        `;
+        
+        // 2. DESGLOSE PAGOS POSTERIORES
+        if (f.plazosPosteriores > 0) {
+            pagosPosterioresPorFamiliar += `
+                <div class="small" style="margin-left:10px; font-weight: normal; margin-top: 2px;">
+                    ${idx + 1} Familikidea: ${f.plazosPosteriores} x ${f.fee.toFixed(2)} €
+                </div>`;
+        } else {
+            pagosPosterioresPorFamiliar += `
+                <div class="small" style="margin-left:10px; font-weight: normal; margin-top: 2px; color: #888;">
+                    ${idx + 1} Familikidea: Ordainketa gehigarririk ez.
+                </div>`;
+        }
+    });
+
+    totalBox.innerHTML = `
+        <div style="background:#fff; border-radius:10px; padding:10px 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); font-weight:700; margin-bottom:8px; color: #387b5b;">
+            URTEAN ORDAINDU BEHARREKO GUZTIZKOA: ${totalAnual.toFixed(2)} € 
+            <div class="small" style="font-weight: normal; margin-top: 4px;">(Alta-kuota eta epe guztiak barneratzen ditu)</div>
+        </div>
+
+        <div style="display: flex; gap: 20px; border-top: 1px solid #c0d0c0; padding-top: 10px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 250px;">
+                <strong style="display:block; margin-bottom: 5px; color: #a0522d;">LEHEN ORDAINKETAREN ZENBATEKOA: ${totalPrimerPago.toFixed(2)} €</strong>
+                ${primerPagoPorFamiliar}
+            </div>
+            <div style="flex: 1; min-width: 250px;">
+                <strong style="display:block; margin-bottom: 5px; color: #2a5a40;">ONDORENGO ORDAINKETAK: ${montoTotalPagosPosteriores.toFixed(2)} €</strong>
+                <div class="small" style="font-weight: normal; margin-bottom: 5px;">(Lehen ordainketa kenduta, falta diren epeen batura)</div>
+                ${pagosPosterioresPorFamiliar}
+            </div>
+        </div>
+    `;
+
+ // --------------------- RESUMEN (resultsBox) ---------------------
+resultsBox.innerHTML = '';
+fees.forEach((f, idx) => {
+  const sheetName = f.div.querySelector('.sheetSelect').value;
+  const month = f.div.querySelector('.monthSelect').value;
+
+  let cuotaText = f.fee > 0 ? f.fee.toFixed(2)+' €' : '0.00 €';
+  let altaText = f.alta ? ` + Alta-kuota: 28 €` : '';
+
+  let plazosTotal = f.plazosRestantes;
+  let formaPago = '';
+  let monthIndex = f.div.querySelector('.monthSelect').selectedIndex;
+
+  if (monthIndex >= 0 && monthIndex <= 5) {
+    formaPago = `<span class="popupLink" data-info='🏦↪️ <b>Helbideratutako ordainketa:</b><br>Hileroko banku helbideraketa bidez egiten da.<br>Azken epea <b>martxoaren 1etik 5era</b> bitartekoa da "Master" taldean izan ezik, non azken epea <b>apirilaren 1etik 5era</b> bitartean egiten den.'>Helbideratutako ordainketa</span>`;
+  } else {
+    formaPago = `<span class="popupLink" data-info='🏦➡️ <b>Banku transferentzia:</b><br>Banku transferentzia bidez ordainketa bakarra egiten da zehaztutako kontura:<br><b>ABANCA ES75 2080 3637 8130 4003 7051</b>.'>Banku transferentzia</span>`;
+  }
+ 
+  let detallePagoPosterior = '';
+  if (f.plazosPosteriores > 0 && f.fee > 0) {
+    detallePagoPosterior = `
+      <span style="display:block; margin-top:2px; padding-left:10px; font-size:0.8em; color:#555;">
+        ➡️ **Ondorengo ordainketak:** ${f.plazosPosteriores} x ${f.fee.toFixed(2)} € (klubeko kuota bakarrik)
+      </span>
+    `;
+  } else if (f.plazosRestantes === 1 && f.fee > 0) {
+    detallePagoPosterior = `
+      <span style="display:block; margin-top:2px; padding-left:10px; font-size:0.8em; color:#555;">
+        ➡️ **Ordainketa bakarra** (Transferentzia): ${(f.fee + f.alta).toFixed(2)} €
+      </span>
+    `;
+  }
+
+  const div = document.createElement('div');
+  div.className = 'resumenLine';
+  div.innerHTML = `
+    **${idx+1} Familiakidea:** ${sheetName} (${month})<br>
+    **Lehen ordainketa:** <b>${(f.fee + f.alta).toFixed(2)} €</b> (${cuotaText.replace(' €', '')} Kuota ${altaText}) | Epeak guztira: ${plazosTotal} (${formaPago})
+    ${detallePagoPosterior}
+  `;
+  resultsBox.appendChild(div);
+});
+
+// **Aseguramos que el listener se adjunte después de crear los elementos dinámicos**
+attachPopupListeners();
+
+} // Cierre correcto de recalcAll()
+
+// --------------------- POPUPS MODERNOS (Función Centralizada) ---------------------
+
+/**
+ * Función genérica para mostrar el popup modal.
+ * @param {string} title - Título del popup.
+ * @param {string} content - Contenido HTML del popup.
+ */
+const showPopup = (title, content, buttonId = 'closePopup') => {
+    // Crear overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'popupOverlay';
+    overlay.style.display = 'flex';
+    
+    // Crear ventana del popup
+    const popup = document.createElement('div');
+    // Estilos internos forzados para el popup
+    popup.style.background = '#fff';
+    popup.style.fontFamily = "'Roboto', Arial, sans-serif";
+    popup.style.padding = '22px 26px';
+    popup.style.borderRadius = '12px';
+    popup.style.boxShadow = '0 6px 20px rgba(0,0,0,0.25)';
+    popup.style.maxWidth = '420px';
+    popup.style.textAlign = 'left';
+    popup.style.fontSize = '0.95rem';
+    popup.style.lineHeight = '1.5em';
+    popup.style.color = '#333';
+    popup.innerHTML = `
+        <h3 style="margin-top:0; color:#387b5b; font-size:1.1rem;">${title}</h3>
+        <p style="margin-bottom:0.8em;">${content}</p>
+        <div style="text-align:right; margin-top:12px;">
+            <button id="${buttonId}" style="padding:8px 15px; border:0; border-radius:8px; background:#387b5b; color:white; cursor:pointer; font-weight:600;">Itxi</button>
+        </div>
+    `;
+    
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+
+    // Cerrar al hacer clic en el botón
+    document.getElementById(buttonId).addEventListener('click', () => {
+        overlay.remove();
+    });
+    // Cerrar al hacer clic fuera del popup
+    overlay.addEventListener('click', closeEvent => {
+        if (closeEvent.target === overlay) overlay.remove();
+    });
+};
+
+/**
+ * Adjunta un listener de eventos a todo el documento para la clase .popupLink
+ * (Necesario para elementos creados dinámicamente)
+ */
+function attachPopupListeners() {
+    // Removemos el listener antiguo si existe para evitar duplicados
+    document.removeEventListener('click', handlePopupClick);
+    
+    // Adjuntamos el nuevo listener
+    document.addEventListener('click', handlePopupClick);
+}
+
+const handlePopupClick = e => {
+    // Verificamos si el elemento clicado o su padre más cercano es un .popupLink
+    const linkElement = e.target.closest('.popupLink');
+
+    if (linkElement) {
+        e.preventDefault();
+        const infoText = linkElement.dataset.info;
+        showPopup('Ordainketa Informazioa', infoText);
+    }
+};
+
+// --------------------- POPUP RGI / IMV AL MARCAR CHECKBOX ---------------------
+const rgiCheckbox = document.querySelector('#useRGI');
+if (rgiCheckbox) {
+  rgiCheckbox.addEventListener('change', () => {
+    recalcAll();
+    if (rgiCheckbox.checked) {
+      const infoText = `
+      ℹ️ <b>DSBE / BGDS laguntza</b><br><br>
+      Kuotan <b>%75eko</b> hobaria.<br>
+      Hobari hau hautatzen baduzu, aukeratzen baduzu, <b>hilero, 25a baino lehen</b> kobratu izanaren ziurtagiria aurkeztu beharko duzu.<br><br>Laguntza hau hautatzean familiakide kopuruen hobariak ez dira aplikatzen.
+      `;
+
+      showPopup('DSBE / BGDS hobariaren informazioa', infoText, 'closeRgiPopup');
+    }
+  });
+}
+
+// Inicializamos los listeners al cargar la página por primera vez
+attachPopupListeners();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
